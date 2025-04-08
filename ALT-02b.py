@@ -1,3 +1,5 @@
+# ------ INIZIO ALT-Scann8 full code
+
 #!/usr/bin/env python
 """
 ALT-Scann8 UI - Alternative software for T-Scann 8
@@ -3039,7 +3041,10 @@ def stop_scan():
 
     # Enable/Disable related buttons
     except_widget_global_enable([start_btn], not ScanOngoing)
-
+    
+    # AGGIUNTO - per pannello, per mettere in Stop lo Start
+    if hwpanel_registered: # AGGIUNTO
+        hw_panel.start_stop_scan(False)  #AGGIUNTO # Invia HWPANEL_STOP al Pico
 
 def capture_loop():
     global win
@@ -4454,20 +4459,30 @@ def init_logging():
 
 # HwPanel callback function
 # Used to invoke ALT-Scann8 functions from HwPanel extension
+# HwPanel callback function - Riga 4458 -- NON ELIMINARE
+# -- INIZIO di Alt_03.py Callback -- NON ELIMINARE
+# -- INIZIO di Alt_03.py Callback -- NON ELIMINARE
+# -- INIZIO di Alt_03.py Callback -- NON ELIMINARE
+# -- INIZIO di Alt_03.py Callback -- NON ELIMINARE
+hwpanel_registered = False
+hwpanel_callback_active = False
+HWPANEL_CONNECTED_LABEL = 98  # Aggiunto per allineare con hwpanel-py
 
- # HwPanel callback function - Riga 4458
-# -- INIZIO di Alt_02.py Callback -- NON ELIMINARE
-# -- INIZIO di Alt_02.py Callback -- NON ELIMINARE
-# -- INIZIO di Alt_02.py Callback -- NON ELIMINARE
-# -- INIZIO di Alt_02.py Callback -- NON ELIMINARE
 def hw_panel_callback(command, param1=None):
     global hwpanel_registered, hwpanel_callback_active
 
     hwpanel_callback_active = True
 
-    if command == HWPANEL_REGISTER:
-        hwpanel_registered = param1
-        logo_label.config(bg="sky blue")
+    if command == -1:  # Stato iniziale
+        logo_label.config(bg="AntiqueWhite1")  # Pannello MAI connesso
+    elif command == HWPANEL_REGISTER:
+        hwpanel_registered = param1  # Registra il pannello per la GUI
+        # Non modifica la label, gestita da HWPANEL_CONNECTED_LABEL
+    elif command == HWPANEL_CONNECTED_LABEL:
+        if param1:
+            logo_label.config(bg="sky blue")  # Pannello Connesso
+        else:
+            logo_label.config(bg="tomato")  # Pannello Disconnesso
     elif command == HWPANEL_START_STOP:
         start_scan()
     elif command == HWPANEL_FORWARD:
@@ -4478,11 +4493,10 @@ def hw_panel_callback(command, param1=None):
         cmd_fast_forward_movie()
     elif command == HWPANEL_RW:
         cmd_rewind_movie()
-# ---- FINE di Alt_02.py Callback ---- NON ELIMINARE
-# ---- FINE di Alt_02.py Callback ---- NON ELIMINARE
-# ---- FINE di Alt_02.py Callback ---- NON ELIMINARE
-# ---- FINE di Alt_02.py Callback ---- NON ELIMINARE
-# ---- FINE di Alt_01.py Callback ---- NON ELIMINARE
+# ---- FINE di Alt_03.py Callback ---- NON ELIMINARE
+# ---- FINE di Alt_03.py Callback ---- NON ELIMINARE
+# ---- FINE di Alt_03.py Callback ---- NON ELIMINARE
+# ---- FINE di Alt_03.py Callback ---- NON ELIMINARE
     elif command == HWPANEL_FOCUS_VIEW:
         real_time_display.set(not RealTimeDisplay)
         cmd_set_real_time_display()
@@ -6879,3 +6893,4 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
+
